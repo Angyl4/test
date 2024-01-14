@@ -6,7 +6,6 @@ class Animal:
     def _str_(self):
         return f"{self.name} – издает звук {self.data}"
 
-
 animal1 = Animal('Cat', 'мяу')
 
 animal2 = Animal('Dog', 'гав')
