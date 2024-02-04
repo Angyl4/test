@@ -1,6 +1,27 @@
 import telebot
+
+import webbrowser
+
 bot = telebot.TeleBot('6759261764:AAEgKy3wlYy3sLicBMWRR9XPk_9GF4mDDHg')
+         
+@bot.message_handler(commands=['ozon'])
+def site(message):
+    webbrowser.open('https://www.ozon.ru/')
+
+@bot.message_handler(commands=['downdetector'])
+def site(message):
+    webbrowser.open('https://downdetector.com/')
+
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, "Howdy, how are you doing?")
+    bot.send_message(message.chat.id, f'Привет) {message.from_user.first_name}')
+
+@bot.message_handler()
+def info(message):
+    if message.text.lower() == 'привет':
+        bot.send_message(message.chat.id, f'Привет) {message.from_user.first_name}')
+    elif message.text.lower() == 'id':
+         bot.reply_to(message, f'ID: {message.from_user.id}')
+
+
 bot.infinity_polling()
