@@ -1,9 +1,11 @@
 import telebot
+from telebot import types #модуль для добавления кнопок
 
 import webbrowser
 
 bot = telebot.TeleBot('6759261764:AAEgKy3wlYy3sLicBMWRR9XPk_9GF4mDDHg')
-         
+
+ #НИЖЕ мы на источнике где запущен бот открываем страницу в инете
 @bot.message_handler(commands=['ozon'])
 def site(message):
     webbrowser.open('https://www.ozon.ru/')
@@ -12,16 +14,63 @@ def site(message):
 def site(message):
     webbrowser.open('https://downdetector.com/')
 
-@bot.message_handler(commands=['start', 'help'])
+#ниже фиксируем, что будет делать бот по команде старт
+@bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, f'Привет) {message.from_user.first_name}')
 
+#ниже фиксируем, что будет делать бот по команде хелп
+@bot.message_handler(commands=['help'])
+def help(message):
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('Перейти на сайт Ozon', url='https://www.ozon.ru/')#создаю отдельную кнопку , url='https://www.ozon.ru/'
+    markup.row(btn1) #в метод буду добавлять кнопку, если добавить несколько кнопок они будут в одной строке
+    btn2 = types.InlineKeyboardButton('Перейти на сайт Downdetector', url='https://downdetector.com/')
+    markup.row(btn2)
+    btn3 = types.InlineKeyboardButton('Удалить ласт текст', callback_data='delete')
+    markup.row(btn3)
+    bot.reply_to(message, 'Лови свои кнопки, хакер🤖', reply_markup=markup)#тут мы к ответу добавляем кнопку для перехода на сайт озона
+
+@bot.callback_query_handler(func=lambda callback: True)#создаем декоратор, чтобы кнопка callback_data работали
+def callback_message(callback):
+    if callback.data == 'delete':
+        bot.delete_message(callback.message.chat.id, callback.message.message_id - 1)#фиксирую минус 1 т.к. нужно удалить не последнее сообщение т.к. это ответ от бота, а предпоследнее
+        
+#заставляем бота отвечать на наш привет и другие фразы в том числе по фразам вызывать кнопки
 @bot.message_handler()
 def info(message):
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('Перейти на сайт Ozon', url='https://www.ozon.ru/')#создаю отдельную кнопку , url='https://www.ozon.ru/'
+    markup.row(btn1) #в метод буду добавлять кнопку
+    btn2 = types.InlineKeyboardButton('Перейти на сайт Downdetector', url='https://downdetector.com/')
+    markup.row(btn2) #в метод буду добавлять кнопку
+    btn3 = types.InlineKeyboardButton('Удалить ласт текст', callback_data='delete')
+    markup.row(btn3) #2 кнопки в одной линии
     if message.text.lower() == 'привет':
         bot.send_message(message.chat.id, f'Привет) {message.from_user.first_name}')
     elif message.text.lower() == 'id':
          bot.reply_to(message, f'ID: {message.from_user.id}')
+    elif message.text.lower() == 'сайт':
+         bot.reply_to(message, 'Лови свои кнопки, хакер🤖', reply_markup=markup)
+
+#заставляем бота отвечать на присланное фото + вызывать кнопки  
+@bot.message_handler(content_types=['photo'])#можно добавлять несколько типов файлов например аудио и видео, бот который отвечает на отправку фото в бота
+def get_photo(message):
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('Перейти на сайт для продажи', url='https://www.ozon.ru/')#создаю отдельную кнопку
+    markup.row(btn1) #в метод буду добавлять кнопку
+    btn2 = types.InlineKeyboardButton('Удалить фото', callback_data='delete')
+    btn3 = types.InlineKeyboardButton('Изменить текст', callback_data='edit')
+    markup.row(btn2, btn3) #2 кнопки в одной линии
+    bot.reply_to(message, 'Фото просто огонь! Продавай!', reply_markup=markup)#тут мы к ответу добавляем кнопку для перехода на сайт озона
+
+@bot.callback_query_handler(func=lambda callback: True)#создаем декоратор, чтобы кнопка callback_data работали
+def callback_message(callback):
+    if callback.data == 'delete':
+        bot.delete_message(callback.message.chat.id, callback.message.message_id - 1)#фиксирую минус 1 т.к. нужно удалить не последнее сообщение т.к. это ответ от бота, а предпоследнее
+    elif callback.data == 'edit':
+        bot.edit_message_text('Изменил текст как и просил', callback.message.chat.id, callback.message.message_id)
 
 
+#заствляем бота работать бесконечно, ОБЯЗАТЕЛЬНО В КОНЦЕ кода
 bot.infinity_polling()
