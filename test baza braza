@@ -1,0 +1,8 @@
+import telebot
+import sqlite3
+
+bot = telebot.TeleBot('6913161291:AAGkIzTL_CyXdsQdEcZ6iwBeX-ipZVxKmY4')
+
+
+
+bot.infinity_polling()
