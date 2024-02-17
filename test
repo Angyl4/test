@@ -73,4 +73,6 @@ def callback_message(callback):
 
 
 #заствляем бота работать бесконечно, ОБЯЗАТЕЛЬНО В КОНЦЕ кода
+        
+        
 bot.infinity_polling()
