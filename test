@@ -2,7 +2,7 @@ import telebot
 
 import webbrowser
 
-bot = telebot.TeleBot('ТУТ ДОЛЖЕН БЫТЬ ТОКЕН БОТА')
+bot = telebot.TeleBot('6759261764:AAEgKy3wlYy3sLicBMWRR9XPk_9GF4mDDHg')
          
 @bot.message_handler(commands=['ozon'])
 def site(message):
