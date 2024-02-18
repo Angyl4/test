@@ -1,0 +1,41 @@
+import telebot
+import requests
+import json
+
+bot = telebot.TeleBot('6544809654:AAH_BV74VSnywjKTd6yFcGqcxYsYKiIVBkI')
+API = '2c149d1b9f8e84c08a0f5c62c7d0c15e'
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'Привет, рад тебя видеть! Напиши название города')
+
+@bot.message_handler(content_types=['text'])
+def get_weather(message):
+    city = message.text.strip().lower()
+    res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}&units=metric')
+    if res.status_code == 200:
+        data = json.loads(res.text)#преобразовываем джейсон в текст, пример кода без форматирования будет в конце кода
+        temp = data["main"]["temp"]
+        bot.reply_to(message, f'Сейчас погода: {temp} (°C)') #обращаемся к данным по пути джейсона
+
+        image = 'sunny.JPG' if temp > 5.0 else "cloudy.JPG"
+        file = open('./' + image, 'rb')
+        bot.send_photo(message.chat.id, file)
+    else:
+        bot.reply_to(message, f'Город указан не верно')  
+
+bot.polling(none_stop=True)
+
+
+
+
+
+    #Сейчас погода: {'coord': {'lon': -122.3321, 'lat': 47.6062}, 
+    #'weather': [{'id': 804, 'main': 'Clouds', 'description': 'overcast clouds', 'icon': '04n'}],
+    #'base': 'stations',
+    #'main': {'temp': 5.28, 'feels_like': 2.14, 'temp_min': 2.6, 'temp_max': 8.4, 'pressure': 1009, 'humidity': 71},
+    #'visibility': 10000, 'wind': {'speed': 4.12, 'deg': 140}, 'clouds': {'all': 100},
+    #'dt': 1708245552, 'sys': {'type': 1, 'id': 3417, 'country': 'US', 
+    #'sunrise': 1708269046, 'sunset': 1708306566}, 
+    #'timezone': -28800, 'id': 5809844, 'name': 'Seattle', 'cod': 200}
