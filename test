@@ -71,8 +71,4 @@ def callback_message(callback):
     elif callback.data == 'edit':
         bot.edit_message_text('Изменил текст как и просил', callback.message.chat.id, callback.message.message_id)
 
-
-#заствляем бота работать бесконечно, ОБЯЗАТЕЛЬНО В КОНЦЕ кода
-        
-        
 bot.infinity_polling()
