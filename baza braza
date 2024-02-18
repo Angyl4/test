@@ -1,0 +1,19 @@
+import telebot
+import sqlite3
+
+bot = telebot.TeleBot('6913161291:AAGkIzTL_CyXdsQdEcZ6iwBeX-ipZVxKmY4')
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    conn = sqlite3.connect('mymy.sql')#создаем базу данных
+    cur = conn.cursor()#через него мы сможем выполнять различные команды для БД
+
+    cur.execute('CREATE TABLE IF NOT EXIST users (id int auto_increment primary key, name varchar(255), pass varchar(255))') #CREATE TABLE IF NOT EXIST users при старте создает таблицу только если ее нет
+    conn.commit() #чтобы выполнить создание таблицы, синхронизирует все изменения, чтобы появилась таблица с базой данных 
+    cur.close() #
+    conn.close() #
+#
+
+
+
+bot.infinity_polling()
