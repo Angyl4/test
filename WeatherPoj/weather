@@ -1,8 +1,9 @@
 import telebot
 import requests
 import json
+import settings4
 
-bot = telebot.TeleBot('6544809654:AAH_BV74VSnywjKTd6yFcGqcxYsYKiIVBkI')
+bot = telebot.TeleBot(settings4.API_KEY)
 API = '2c149d1b9f8e84c08a0f5c62c7d0c15e'
 
 
