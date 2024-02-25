@@ -3,8 +3,7 @@ from telebot import types #модуль для добавления кнопок
 import settings
 import webbrowser
 
-
-bot = telebot.TeleBot(settings.API_KEY)
+bot = telebot.TeleBot(settings.API_KEY)#добавляю ключ из файла
 
  #НИЖЕ мы на источнике где запущен бот открываем страницу в инете
 @bot.message_handler(commands=['ozon'])
