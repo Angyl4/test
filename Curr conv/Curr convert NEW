@@ -1,7 +1,8 @@
 import telebot
 from CurrencyConverter import convert
 from telebot import types
-bot = telebot.TeleBot('6736242218:AAE6LL-DX4Am_Ezs3kU5aDstHJjOwyyTAmA')
+import settings2
+bot = telebot.TeleBot(settings2.API_KEY)
 
 amount = 0
 
