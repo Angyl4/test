@@ -7,7 +7,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
-    markup = types.ReplyKeyboardMarkup
+    markup = types.ReplyKeyboardMarkup()
     markup.add(types.KeyboardButton('Открыть website', web_app=WebAppInfo(url='https://www.ozon.ru/')))
     await message.answer('Привет хакер', reply_markup=markup)
 
