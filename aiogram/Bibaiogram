@@ -1,0 +1,41 @@
+#файл для создания бота на библиотеке aiogram
+
+#подключаем определенные классы вместо полного подключения библиотеки "import aiogram"
+from aiogram import Bot, Dispatcher, executor, types
+
+bot = Bot('ТОКЕН')
+
+di = Dispatcher(bot) #нужно, чтобы мы мы работали с нашим ботом
+
+@di.message_handler(commands=['start']) #если оставить пустые скобки, то мы будем отслеживать все сообщения 
+    #чтобы отслеживать только текст нужно указать в скобках следующее (content_types=['text']) и т.д. в зависимости от того, что нужно, фото, видео ...
+async def start(message: types.Message):   #указываем async чтобы система понимала, что команды выполняются ассинхронно, т.к. aiogram так работает
+    #await bot.send_message(message.chat.id, 'Hello') #await означает, что боту нужно дождаться действия, этот способ мы не будем исп. он чисто для примера
+    #await message.answer('Hello')
+    await message.reply('Hello')
+    #две строки ниже отображают возможность отправки в ответ на сообщение клиента определенный файл 
+    #file = open('/some.png', 'rb')
+    #await message.answer_photo(file)
+
+
+@di.message_handler(commands=['help'])
+async def info(message: types.Message):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.inline_keyboard_button('Site', url='https://www.ozon.ru/'))
+    markup.add(types.inline_keyboard_button('Hello', callback_data='hello'))
+    await message.reply('Hello', reply_markup=markup) #reply_markup=markup - означает, что я передал объект маркап в кач-ве кнопок
+
+@di.callback_query_handler()
+async def callback(call):
+    await call.message.answer(call.data)
+
+
+@di.message_handler(commands=['reply'])
+async def reply(message: types.Message):
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True) #one_time_keyboard=True - если прописать такое в скобках, то кнопки будут показаны только 1 раз 
+    markup.add(types.KeyboardButton('Site'))
+    markup.add(types.KeyboardButton('Website'))
+    await message.answer('Hello', reply_markup=markup)
+
+
+executor.start_polling(di)
