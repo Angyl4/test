@@ -1,6 +1,7 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.web_app_info import WebAppInfo
 import settings5
+import json
 
 bot = Bot(settings5.API_KEY)
 di = Dispatcher(bot)
@@ -15,6 +16,7 @@ async def start(message: types.Message):
 
 @di.message_handler(content_types=['web_app_data'])
 async def web_app(message: types.Message):
-    await message.answer(message.web_app_data.data)
+    res = json.loads(message.web_app_data.data) #обращаемся к полученному из формы джейсону, для этого подрубал модуль джейсона
+    await message.answer(f'Name: {res["name"]}. Email: {res["email"]}. Phone: {res["phone"]}')
 
 executor.start_polling(di)
