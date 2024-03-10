@@ -11,7 +11,7 @@ async def start(message: types.Message):
     markup = types.ReplyKeyboardMarkup() 
 #если вместо текущей структуры будет указано InlineKeyboardMarkup() и InlineKeyboardButton, то в форме заполнения данных будет подгружаться
 #имя человека из ТГ, но текущая реализация осталась т.к. без нее не будут отправляться данные из заполненной формы 
-    markup.add(types.KeyboardButton('Открыть website', web_app=WebAppInfo(url='https://github.com/Angyl4/test/blob/main/webapp/index.html'))) #указываем ссылку на веб приложение
+    markup.add(types.KeyboardButton('Открыть website', web_app=WebAppInfo(url='https://test-aw89.onrender.com'))) #указываем ссылку на веб приложение
     await message.answer('Привет хакер', reply_markup=markup)
 
 @di.message_handler(content_types=['web_app_data'])
