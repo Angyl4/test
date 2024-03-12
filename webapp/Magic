@@ -1,7 +1,6 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.web_app_info import WebAppInfo
 import settings5
-import wsgi
 import json
 
 bot = Bot(settings5.API_KEY)
