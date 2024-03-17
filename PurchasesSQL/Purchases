@@ -1,7 +1,7 @@
 import telebot
 import sqlite3
 import settings6
-from datetime import date
+import datetime
 
 bot = telebot.TeleBot(settings6.API_KEY)
 name = None
@@ -35,11 +35,9 @@ def user_price(message):
 def user_description(message):
     global description
     description = message.text.strip()
-    bot.register_next_step_handler(message, user_date)
-
-def user_date(message):
     global date
-    date = date.today()
+    date = datetime.datetime.now()
+    date = date.strftime("%d.%m.%Y")
     
     conn = sqlite3.connect('purch.sql')
     cur = conn.cursor()
