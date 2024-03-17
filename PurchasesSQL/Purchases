@@ -1,50 +1,61 @@
 import telebot
 import sqlite3
 import settings6
+from datetime import date
 
 bot = telebot.TeleBot(settings6.API_KEY)
 name = None
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    conn = sqlite3.connect('mymy.sql') #создаем базу данных
+    conn = sqlite3.connect('purch.sql') #создаем базу данных
     cur = conn.cursor() #через него мы сможем выполнять различные команды для БД
 
-    cur.execute('CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, name varchar(255), pass varchar(255))') #CREATE TABLE IF NOT EXIST users при старте создает таблицу только если ее нет
+    cur.execute('CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, purchases varchar(255), price INT, description varchar(255), date varchar(255))') #CREATE TABLE IF NOT EXIST users при старте создает таблицу только если ее нет
     conn.commit() #чтобы выполнить создание таблицы. функция коммит синхронизирует все изменения, чтобы появилась таблица с базой данных 
     cur.close() #буду закрывать курсор
     conn.close() #закрывать соединение 
 
-    bot.send_message(message.chat.id, 'Привет, сейчас тебя зарегистрируем! Введите ваше имя')
-    bot.register_next_step_handler(message, user_name)
+    bot.send_message(message.chat.id, 'Привет, напиши название товара/покупки')
+    bot.register_next_step_handler(message, user_purchases)
 
 #получаем юзернейм от пользователя
-def user_name(message):
-    global name
-    name = message.text.strip() #strip удаляет пробелы ДО и после текста
-    bot.send_message(message.chat.id, 'Введите пароль')
-    bot.register_next_step_handler(message, user_pass)
+def user_purchases(message):
+    global purchases
+    purchases = message.text.strip() #strip удаляет пробелы ДО и после текста
+    bot.send_message(message.chat.id, 'Введи цену')
+    bot.register_next_step_handler(message, user_price)
 #получаем пароль от пользователя
-def user_pass(message):
-    password = message.text.strip()
+def user_price(message):
+    global price
+    price = message.text.strip()
+    bot.send_message(message.chat.id, 'Если нужно введи описание покупки, если не нужно оставь пустым')
+    bot.register_next_step_handler(message, user_description)
+
+def user_description(message):
+    global description
+    description = message.text.strip()
+    bot.register_next_step_handler(message, user_date)
+
+def user_date(message):
+    global date
+    date = date.today()
     
-    conn = sqlite3.connect('mymy.sql')
+    conn = sqlite3.connect('purch.sql')
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO users (name, pass) VALUES ('%s', '%s')" % (name, password))
+    cur.execute("INSERT INTO users (purchases, price, description, date) VALUES ('%s', '%s', '%s', '%s')" % (purchases, price, description, date))
     conn.commit()
     cur.close()
     conn.close()
 
-
     markup = telebot.types.InlineKeyboardMarkup() #тут можно было импортировать тайпсы"from telebot import types", но просто обратился к тайпсам вручную по пути
-    markup.add(telebot.types.InlineKeyboardButton('Список пользователей', callback_data="users"))
-    bot.send_message(message.chat.id, 'Пользователь зарегистрирован', reply_markup=markup)
-
+    markup.add(telebot.types.InlineKeyboardButton('Открыть список товаров/покупок', callback_data="users"))
+    bot.send_message(message.chat.id, 'Данные зафиксированы', reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
-    conn = sqlite3.connect('mymy.sql')
+    conn = sqlite3.connect('purch.sql')
     cur = conn.cursor()
 
     cur.execute('SELECT * FROM users')
@@ -52,7 +63,7 @@ def callback(call):
 
     info = ''
     for el in users:
-        info += f'Имя: {el[1]}, пароль: {el[2]}\n'
+        info += f'Покупка: {el[1]}, цена: {el[2]}, описание: {el[3]}, дата: {el[4]}\n'
 
     cur.close()
     conn.close()
